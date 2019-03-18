@@ -1,0 +1,154 @@
+/*this is the program for bluetooth car control using relay AND HC SR04 ULTRASONIC SENSOR
+to AVOID COLLISION WITH  OBJECT in front of the car */
+
+#define LF 2
+#define LB 3
+
+#define RF 4
+#define RB 5
+
+
+//defining pins for ultrasonic.
+
+#define trigPin 6 //defining trig pin of ultrasonic
+#define echoPin 7 // defining echo pin for ultrasonic SR 04
+
+
+//defining variables 
+
+int command; // for command to be sent from android application.
+
+long duration ;      //variables for calculations.
+int distance ;
+int safetyDistance;
+
+
+void setup() {
+
+  //SETUP PINS OF RELAY 
+  
+  pinMode(LF , OUTPUT); 
+  pinMode(LB , OUTPUT);
+  pinMode(RF , OUTPUT);
+  pinMode(RB , OUTPUT);
+
+ 
+
+  // setup pins for ultrasonic sr04.
+
+  pinMode(trigPin,OUTPUT); // sets the trig pin as output
+  pinMode(echoPin,INPUT); // sets the echo pin as input 
+
+  
+  Serial.begin(9600); // SETTING UP BAUD RATE FOR BLUETOOTH 
+  }
+
+  void loop(){
+
+
+// Clears the trigPin
+digitalWrite(trigPin, LOW);
+delayMicroseconds(2);
+
+// Sets the trigPin on HIGH state for 10 micro seconds
+digitalWrite(trigPin, HIGH);
+delayMicroseconds(10);
+digitalWrite(trigPin, LOW);
+
+// Reads the echoPin, returns the sound wave travel time in microseconds
+duration = pulseIn(echoPin, HIGH);
+
+// Calculating the distance
+distance= duration*0.034/2;
+
+safetyDistance = distance;
+if (safetyDistance <= 15){
+
+ 
+  
+
+  if (Serial.available() > 0 ) {
+    command = Serial.read();
+   Stop(); // INITIALLY MOTORS WILL NOT RUN.
+    
+    
+    
+    switch (command){
+     
+      case 'B':
+         backward();
+          break;         
+    }
+  }
+}
+else{
+
+ if (Serial.available() > 0 ) {
+    command = Serial.read();
+    Stop(); // INITIALLY MOTORS WILL NOT RUN.
+
+    //YOUR APP WILL SEND THIS COMMAND TO BLUETOOTH WHICH IS SENT TO ARDUINO
+    
+    switch (command){
+      case 'F': 
+         forward();
+          break;
+      case 'B':
+         backward();
+          break;
+      case 'L':
+         left();
+          break;
+      case 'R':
+         right();
+          break;
+         
+      case 'S':
+         Stop();
+          break;
+     } 
+   }
+ }
+ 
+
+
+// Prints the distance on the Serial Monitor
+
+Serial.print("Distance: ");
+Serial.println(distance);
+}
+
+
+
+void forward() {
+  digitalWrite(LF, HIGH );
+  digitalWrite(LB,LOW);
+  digitalWrite(RF, HIGH );
+  digitalWrite(RB,LOW);
+  }
+void backward() {
+  digitalWrite(RB, HIGH );
+  digitalWrite(RF, LOW);
+  digitalWrite(LB, HIGH );
+  digitalWrite(LF, LOW);
+
+}
+void right() {
+  digitalWrite(LF, LOW );
+  digitalWrite(LB, HIGH );
+  digitalWrite(RB, LOW );
+  digitalWrite(RF, HIGH);
+}
+void left(){
+  digitalWrite(RF, LOW );
+  digitalWrite(RB,HIGH );
+  digitalWrite(LB,LOW );
+  digitalWrite(LF, HIGH);
+}
+void Stop(){
+  digitalWrite(LF , LOW);
+  digitalWrite(LB , LOW);
+  digitalWrite(RF , LOW);
+  digitalWrite(RB , LOW);
+}
+  
