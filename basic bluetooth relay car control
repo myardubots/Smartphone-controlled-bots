@@ -1,0 +1,131 @@
+/*written by 
+*Arshdeep Singh (myardubots)
+*/
+
+// this is the code for making smartphone controlled car using relay , hc-05 , arduino . 
+
+#define LF 2 // defining pins of relay module | relay 1 in pin 2 | rotate left motors forward
+#define LB 3 // relay 2 in pin 3 | rotate left motors backwards 
+
+#define RF 4 // relay 3 in pin 4 | rotate right motors forward
+#define RB 5 // relay 4 in pin 5 | rotate right motors backward
+
+
+
+int command;
+
+void setup() { 
+  pinMode(LF , OUTPUT); //SETUP PINS OF RELAY 1
+  pinMode(LB , OUTPUT);//relay 2 
+  pinMode(RF , OUTPUT);//relay 3
+  pinMode(RB , OUTPUT);//relay 4 
+ 
+ 
+  
+  
+  Serial.begin(9600); // SETTING UP BAUD RATE FOR BLUETOOTH 
+  }
+
+
+void loop(){
+  if (Serial.available() > 0 ) {
+    command = Serial.read();
+    Stop(); // INITIALLY MOTORS WILL NOT RUN.
+    
+    switch (command){
+      case 'F': //YOUR APP WILL SEND THIS COMMAND TO BLUETOOTH WHICH IS SENT TO ARDUINO
+         forward();
+          break;
+      case 'B':
+         backward();
+          break;
+      case 'L':
+         left();
+          break;
+      case 'R':
+         right();
+          break;
+      case 'G':
+        forwardleft();
+         break;
+      case 'H':
+         backleft();
+          break;
+     case 'I':
+       forwardright();
+         break;
+     case 'J':
+        backright();
+         break;
+     
+         
+      case 'S':
+         Stop();
+          break;
+     } 
+   }
+ }
+
+ 
+void forward() {
+  digitalWrite(LF, HIGH );
+  digitalWrite(LB,LOW);
+  digitalWrite(RF, HIGH );
+  digitalWrite(RB,LOW);
+  }
+void backward() {
+  digitalWrite(RB, HIGH );
+  digitalWrite(RF, LOW);
+  digitalWrite(LB, HIGH );
+  digitalWrite(LF, LOW);
+}
+void left() {
+  digitalWrite(LF, HIGH );
+  digitalWrite(LB, LOW );
+  digitalWrite(RB, HIGH );
+  digitalWrite(RF, LOW);
+}
+void right(){
+  digitalWrite(RF, HIGH );
+  digitalWrite(RB, LOW);
+  digitalWrite(LB, HIGH );
+  digitalWrite(LF, LOW);
+}
+void  forwardright(){
+  digitalWrite(RF, HIGH );
+  digitalWrite(RB, LOW);
+  digitalWrite(LB, LOW );
+  digitalWrite(LF, LOW);
+  
+}
+void  backleft(){
+  digitalWrite(RF, LOW );
+  digitalWrite(RB, LOW);
+  digitalWrite(LB, HIGH );
+  digitalWrite(LF, LOW);
+}
+void  forwardleft(){
+  digitalWrite(LF, HIGH );
+  digitalWrite(LB, LOW );
+  digitalWrite(RB, LOW );
+  digitalWrite(RF, LOW);
+}
+void  backright(){
+  digitalWrite(LF, LOW );
+  digitalWrite(LB, LOW );
+  digitalWrite(RB, HIGH );
+  digitalWrite(RF, LOW);
+  
+}
+
+  
+
+void Stop(){
+  digitalWrite(LF , LOW);
+  digitalWrite(LB , LOW);
+  digitalWrite(RF , LOW);
+  digitalWrite(RB , LOW);
+}
+  
+
+ 
